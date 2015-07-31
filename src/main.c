@@ -1,5 +1,6 @@
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_gpio.h"
+#include "stdio_debug.h"
 
 int main()
 {
@@ -10,6 +11,8 @@ int main()
   //Set PA1 as General purpose output
   GPIO_InitTypeDef GPIOA_StructInit = { GPIO_Pin_1, GPIO_Speed_2MHz, GPIO_Mode_Out_OD };
   GPIO_Init(GPIOA, &GPIOA_StructInit);
+
+  printf("Hello world\r\n");
 
   volatile unsigned long i = 0;
   while(1)

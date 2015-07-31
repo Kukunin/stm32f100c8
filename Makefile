@@ -6,6 +6,7 @@ CMSIS_PATH=$(SPL_BASE_PATH)/Libraries/CMSIS/CM3
 CORE_CMSIS_PATH=../CMSIS/Include
 DEVICE_CMSIS_PATH=$(CMSIS_PATH)/DeviceSupport/ST/STM32F10x
 SPL_PATH=$(SPL_BASE_PATH)/Libraries/STM32F10x_StdPeriph_Driver
+OPENOCD_PATH=/usr/share/openocd/scripts
 
 #  List of the objects files to be compiled/assembled
 
@@ -19,12 +20,15 @@ STARTUP_OBJECT=startup.o
 OBJECTS=$(SOURCES:.c=.o) $(SPL_OBJECTS) $(SYSTEM_STM32_OBJECT) $(STARTUP_OBJECT)
 
 OPTIMIZATION = -Os -DUSE_STDPERIPH_DRIVER -DSTM32F10X_MD_VL -ffunction-sections -fdata-sections -Wl,--gc-sections
-#DEBUG = -g
+CFLAGS_DEBUG = -g
+LDFLAGS_DEBUG= -lgcc -lc -lrdimon --specs=rdimon.specs
+CFLAGS_RELEASE = -DNDEBUG
+MODE=DEBUG
 INCLUDES = -I. -I$(CORE_CMSIS_PATH) -I$(DEVICE_CMSIS_PATH) -I$(SPL_PATH)/inc
 
 #  Compiler Options
-CFLAGS = -Wall -mcpu=cortex-m3 -mthumb $(OPTIMIZATION) $(DEBUG) $(INCLUDES)
-LDFLAGS = -static -mcpu=cortex-m3 -nostartfiles -mthumb -Tstm32_flash.ld $(OPTIMIZATION)
+CFLAGS = -Wall -mcpu=cortex-m3 -mthumb $(OPTIMIZATION) $(CFLAGS_$(MODE)) $(INCLUDES)
+LDFLAGS = -static -mcpu=cortex-m3 -nostartfiles -mthumb -Tstm32_flash.ld $(OPTIMIZATION) $(LDFLAGS_$(MODE))
 ASFLAGS = -mcpu=cortex-m3 --defsym RAM_MODE=0
 
 #  Compiler/Assembler/Linker Paths
@@ -37,6 +41,8 @@ STRIP = arm-none-eabi-strip
 OBJDUMP = arm-none-eabi-objdump
 REMOVE = rm -f
 SIZE = arm-none-eabi-size
+OPENOCD = openocd
+GDB = arm-none-eabi-gdb
 
 STFLASH = st-flash
 
@@ -45,11 +51,11 @@ STFLASH = st-flash
 all: $(OBJECTS)
 	$(GCC) $(LDFLAGS) $(OBJECTS) -o $(NAME).elf
 	$(OBJCOPY) -O binary $(NAME).elf $(NAME).bin
-	$(REMOVE) $(NAME).elf
+	$(SIZE) $(NAME).elf
 
 .PHONY: clean
 clean:
-	$(REMOVE) $(OBJECTS) $(NAME).bin
+	$(REMOVE) $(OBJECTS) $(NAME).bin $(NAME).elf
 
 #########################################################################
 #  Default rules to compile .c and .cpp file to .o
@@ -76,3 +82,7 @@ flash: all
 	$(STFLASH) --reset write $(NAME).bin 0x8000000
 erase:
 	$(STFLASH) erase
+openocd:
+	$(OPENOCD) -f $(OPENOCD_PATH)/interface/stlink-v2.cfg -f $(OPENOCD_PATH)/target/stm32f1x.cfg
+gdb:
+	$(GDB) $(NAME).elf

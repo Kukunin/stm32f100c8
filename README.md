@@ -8,15 +8,19 @@ You still need to get the [STM32F10x Standard Peripherals Library](https://ru.wi
 
 Make sure you updated `SPL_BASE_PATH` in Makefile to point your installation of that library.
 
-Also, you need to have `make` and `arm-none-eabi-toolchain`. In Archlinux it took me just to type `yaourt -S gcc-arm-none-eabi-bin` into the console.
+Also, you need to have `make` and `arm-none-eabi-toolchain`. In Archlinux it took me just to type following command in the console.
+
+    sudo pacman -S arm-none-eabi-binutils arm-none-eabi-gcc arm-none-eabi-gdb arm-none-eabi-newlib
 
 That's all.
 
 ## Compiling
 
-Just run `make`. Also, you can use `make flash` to flash the firmware onto controller.
+Just run `make` to compile debug version or `make MODE=RELEASE` for release. Also, you can use `make flash` to flash the firmware onto controller.
 
 As always, `make clean` removes all compiled objects.
+
+Run `make openocd` to run the OpenOCD session, and `make gdb` to connect gdb to it. This way you can freely use `printf` in your code, and it will forwards to OpenOCD window.
 
 Use any comfortable editor/IDE to write your firmware code under `src/` subfolder.
 

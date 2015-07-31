@@ -140,6 +140,7 @@ SECTIONS
 
   PROVIDE ( end = _ebss );
   PROVIDE ( _end = _ebss );
+  PROVIDE ( __end__ = _ebss );
 
   /* User_heap_stack section, used to check that there is enough RAM left */
   ._user_heap_stack :
