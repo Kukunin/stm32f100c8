@@ -3,6 +3,7 @@ NAME = stm32f100c8
 
 SPL_BASE_PATH=../STM32F10x_StdPeriph_Lib_V3.5.0
 CMSIS_PATH=$(SPL_BASE_PATH)/Libraries/CMSIS/CM3
+CORE_CMSIS_PATH=../CMSIS/Include
 DEVICE_CMSIS_PATH=$(CMSIS_PATH)/DeviceSupport/ST/STM32F10x
 SPL_PATH=$(SPL_BASE_PATH)/Libraries/STM32F10x_StdPeriph_Driver
 
@@ -19,11 +20,11 @@ OBJECTS=$(SOURCES:.c=.o) $(SPL_OBJECTS) $(SYSTEM_STM32_OBJECT) $(STARTUP_OBJECT)
 
 OPTIMIZATION = -Os -DUSE_STDPERIPH_DRIVER -DSTM32F10X_MD_VL -ffunction-sections -fdata-sections -Wl,--gc-sections
 #DEBUG = -g
-INCLUDES = -I. -I$(CMSIS_PATH)/CoreSupport -I$(DEVICE_CMSIS_PATH) -I$(SPL_PATH)/inc
+INCLUDES = -I. -I$(CORE_CMSIS_PATH) -I$(DEVICE_CMSIS_PATH) -I$(SPL_PATH)/inc
 
 #  Compiler Options
-CFLAGS = -Wall -mcpu=cortex-m3 -mfloat-abi=softfp -mthumb $(OPTIMIZATION) $(DEBUG) $(INCLUDES)
-LDFLAGS = -static -mcpu=cortex-m3 -mfloat-abi=softfp -nostartfiles -mthumb -Tstm32_flash.ld $(OPTIMIZATION)
+CFLAGS = -Wall -mcpu=cortex-m3 -mthumb $(OPTIMIZATION) $(DEBUG) $(INCLUDES)
+LDFLAGS = -static -mcpu=cortex-m3 -nostartfiles -mthumb -Tstm32_flash.ld $(OPTIMIZATION)
 ASFLAGS = -mcpu=cortex-m3 --defsym RAM_MODE=0
 
 #  Compiler/Assembler/Linker Paths
