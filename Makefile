@@ -17,7 +17,7 @@ STARTUP_SOURCE=$(DEVICE_CMSIS_PATH)/startup/gcc_ride7/startup_stm32f10x_md_vl.s
 STARTUP_OBJECT=startup.o
 OBJECTS=$(SOURCES:.c=.o) $(SPL_OBJECTS) $(SYSTEM_STM32_OBJECT) $(STARTUP_OBJECT)
 
-OPTIMIZATION = -Os -DUSE_STDPERIPH_DRIVER -DSTM32F10X_MD_VL -ffunction-sections -fdata-sections
+OPTIMIZATION = -Os -DUSE_STDPERIPH_DRIVER -DSTM32F10X_MD_VL -ffunction-sections -fdata-sections -Wl,--gc-sections
 #DEBUG = -g
 INCLUDES = -I. -I$(CMSIS_PATH)/CoreSupport -I$(DEVICE_CMSIS_PATH) -I$(SPL_PATH)/inc
 
