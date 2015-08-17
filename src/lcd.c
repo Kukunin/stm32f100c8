@@ -1,5 +1,3 @@
-#include <wiringPi.h>
-//#include <linux/delay>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -10,9 +8,9 @@
 #define PORTRAIT 		6
 #define LANDSCAPE 		9
 
-extern unsigned char	 	PSmallFont[1144];
-extern unsigned char	 	PBigFont[3044];
-extern unsigned char     	PSevenSegNumFont[2004];
+extern const unsigned char	 	PSmallFont[1144];
+extern const unsigned char	 	PBigFont[3044];
+extern const unsigned char     	PSevenSegNumFont[2004];
 
 int 					TP_X,TP_Y;
 int 					fch,fcl,bch,bcl;
@@ -23,8 +21,7 @@ unsigned long int 		disp_x_size,disp_y_size;
 unsigned long int		touch_x_left, touch_x_right, touch_y_top, touch_y_bottom;
 unsigned long int		_default_orientation;
 unsigned char			prec;
-short					D0,D1,D2,D3,D4,D5,D6,D7,RS,CS,WR,RST,T_DOUT,T_IRQ,T_DIN,T_CLK;
-int 					I2cCS,I2cRS,I2cRST,I2cGND,I2cVIN;
+unsigned int					RS,CS,WR,RST;
 int 					gLCDSize;
 int  					SDA1,SCL1;
 unsigned int 			gTime;
@@ -48,55 +45,12 @@ void DspSingleColor(unsigned char h,unsigned char l)
 			}
 	}
 }
-void WriteCommandI2c(unsigned char c)
+void SetPinNU(int Rrs, int Rcs, int Rwr, int Rrst)
 {
-
-	digitalWrite(I2cCS,LOW);
-	digitalWrite(I2cRS,LOW);
-	digitalWrite(SDA1,(c&0x80));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-	digitalWrite(SDA1,(c&0x40));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-	digitalWrite(SDA1,(c&0x20));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-	digitalWrite(SDA1,(c&0x10));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-	digitalWrite(SDA1,(c&0x08));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-	digitalWrite(SDA1,(c&0x04));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-	digitalWrite(SDA1,(c&0x02));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-	digitalWrite(SDA1,(c&0x01));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-	digitalWrite(I2cCS,HIGH);
-
-}
-void SetPinNU(short P0,short P1,short P2,short P3,short P4,short P5,short P6,short P7,
-			  short Prs,short Pcs,short Pwr,short Prst,short Pdout,short Pirq,short Pdin,short Pclk)
-{
-	D0 = P0;
-	D1 = P1;
-	D2 = P2;
-	D3 = P3;
-	D4 = P4;
-	D5 = P5;
-	D6 = P6;
-	D7 = P7;
-
-	RS = Prs;
-	CS = Pcs;
-	WR = Pwr;
-	RST = Prst;
-
-	T_DOUT = Pdout;
-	T_IRQ  = Pirq;
-	T_DIN  = Pdin;
-	T_CLK  = Pclk;
-
-}
-void SetPinI2C(int cs,int scl,int sda,int rs,int rst,int gnd,int vin)
-{
-	I2cCS = cs;
-	SCL1 = scl;
-	SDA1 = sda;
-	I2cRS = rs;
-	I2cRST = rst;
-	I2cGND = gnd;
-	I2cVIN = vin;
-
+	RS = Rrs;
+	CS = Rcs;
+	WR = Rwr;
+	RST = Rrst;
 }
 void SetLCDSize(int a)
 {
@@ -134,54 +88,20 @@ void LCDInit(void)
 		break;
 	}
 	orient=LANDSCAPE;
-	if(gLCDSize == LCD_18 || gLCDSize == LCD_22SPI)
-	{
-		pinMode(I2cCS,OUTPUT);
-		pinMode(SCL1,OUTPUT);
-		pinMode(SDA1,OUTPUT);
-		pinMode(I2cRS,OUTPUT);
-		pinMode(I2cRST,OUTPUT);
-		pinMode(I2cGND,OUTPUT);
-		pinMode(I2cVIN,OUTPUT);
-
-		digitalWrite(I2cVIN,HIGH);
-		digitalWrite(I2cGND,LOW);
-		digitalWrite(I2cRST,LOW);
-		delay(10);
-		digitalWrite(I2cRST,HIGH);
-		delay(10);
-	}
-	else
-	{
-		pinMode(D0, OUTPUT);
-		pinMode(D1, OUTPUT);
-		pinMode(D2, OUTPUT);
-		pinMode(D3, OUTPUT);
-		pinMode(D4, OUTPUT);
-		pinMode(D5, OUTPUT);
-		pinMode(D6, OUTPUT);
-		pinMode(D7, OUTPUT);
-
-		pinMode(CS, OUTPUT);
-		pinMode(RS, OUTPUT);
-		pinMode(WR, OUTPUT);
-		pinMode(RST, OUTPUT);
-
-		digitalWrite(RST, 1);
-		delay(1);
-		digitalWrite(RST, 0);
-		delay(1);
-		digitalWrite(RST, 1);
-		digitalWrite(CS, 1);
-		digitalWrite(WR, 1);
-		delay(20);
-	}
+        digitalWrite(RST, 1);
+        delay(1);
+        digitalWrite(RST, 0);
+        delay(1);
+        digitalWrite(RST, 1);
+        digitalWrite(CS, 1);
+        digitalWrite(WR, 1);
+        delay(20);
 
 
 switch(gLCDSize)
 {
 
-	case LCD_18:
+        case LCD_18:
 		WriteCommand(0x11); //Sleep out
 		delay(120); //Delay 120ms
 		//------------------------------------ST7735S Frame Rate-----------------------------------------//
@@ -460,337 +380,30 @@ switch(gLCDSize)
 }
 void WriteCommand(unsigned int c)
 {
-	if(gLCDSize == LCD_18)
-	{
-		digitalWrite(I2cCS,LOW);
-		delayP(gTime);
-		digitalWrite(I2cRS,LOW);
-		delayP(gTime);
-		digitalWrite(SDA1,((unsigned char)c&0x80));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-		digitalWrite(SDA1,((unsigned char)c&0x40));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-		digitalWrite(SDA1,((unsigned char)c&0x20));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-		digitalWrite(SDA1,((unsigned char)c&0x10));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-		digitalWrite(SDA1,((unsigned char)c&0x08));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-		digitalWrite(SDA1,((unsigned char)c&0x04));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-		digitalWrite(SDA1,((unsigned char)c&0x02));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-		digitalWrite(SDA1,((unsigned char)c&0x01));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-		delayP(gTime);
-		digitalWrite(I2cCS,HIGH);
-		delayP(gTime);
-	}
-	else
-	{
-
 		digitalWrite(RS,0);
 		delayP(gTime);
 		digitalWrite(CS,0);
 		delayP(gTime);
-		if(c>>8&0x01)
-		{
-			digitalWrite(D0,1);
-		}
-		else
-		{
-			digitalWrite(D0,0);
-		}
-		if(c>>8&0x02)
-		{
-			digitalWrite(D1,1);
-		}
-		else
-		{
-			digitalWrite(D1,0);
-		}
-		if(c>>8&0x04)
-		{
-			digitalWrite(D2,1);
-		}
-		else
-		{
-			digitalWrite(D2,0);
-		}
-		if(c>>8&0x08)
-		{
-			digitalWrite(D3,1);
-		}
-		else
-		{
-			digitalWrite(D3,0);
-		}
-		if(c>>8&0x10)
-		{
-			digitalWrite(D4,1);
-		}
-		else
-		{
-			digitalWrite(D4,0);
-		}
-		if(c>>8&0x20)
-		{
-			digitalWrite(D5,1);
-		}
-		else
-		{
-			digitalWrite(D5,0);
-		}
-		if(c>>8&0x40)
-		{
-			digitalWrite(D6,1);
-		}
-		else
-		{
-			digitalWrite(D6,0);
-		}
-		if(c>>8&0x80)
-		{
-			digitalWrite(D7,1);
-		}
-		else
-		{
-			digitalWrite(D7,0);
-		}
-		delayP(gTime);
-		digitalWrite(WR,0);
-		delayP(gTime);
-		digitalWrite(WR,1);
-		delayP(gTime);
-		if(c&0x01)
-		{
-			digitalWrite(D0,1);
-		}
-		else
-		{
-			digitalWrite(D0,0);
-		}
-		if(c&0x02)
-		{
-			digitalWrite(D1,1);
-		}
-		else
-		{
-			digitalWrite(D1,0);
-		}
-		if(c&0x04)
-		{
-			digitalWrite(D2,1);
-		}
-		else
-		{
-			digitalWrite(D2,0);
-		}
-		if(c&0x08)
-		{
-			digitalWrite(D3,1);
-		}
-		else
-		{
-			digitalWrite(D3,0);
-		}
-		if(c&0x10)
-		{
-			digitalWrite(D4,1);
-		}
-		else
-		{
-			digitalWrite(D4,0);
-		}
-		if(c&0x20)
-		{
-			digitalWrite(D5,1);
-		}
-		else
-		{
-			digitalWrite(D5,0);
-		}
-		if(c&0x40)
-		{
-			digitalWrite(D6,1);
-		}
-		else
-		{
-			digitalWrite(D6,0);
-		}
-		if(c&0x80)
-		{
-			digitalWrite(D7,1);
-		}
-		else
-		{
-			digitalWrite(D7,0);
-		}
+                setDataBus(c);
 		delayP(gTime);
 		digitalWrite(WR,0);
 		delayP(gTime);
 		digitalWrite(WR,1);
 		delayP(gTime);
 		digitalWrite(CS,1);
-  }
 }
 void WriteData(unsigned int c)
 {
-	if(gLCDSize == LCD_18)
-	{
-
-		digitalWrite(I2cCS,LOW);
-		delayP(gTime);
-		digitalWrite(I2cRS,HIGH);
-		delayP(gTime);
-		digitalWrite(SDA1,((unsigned char)c&0x80));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-		digitalWrite(SDA1,((unsigned char)c&0x40));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-		digitalWrite(SDA1,((unsigned char)c&0x20));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-		digitalWrite(SDA1,((unsigned char)c&0x10));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-		digitalWrite(SDA1,((unsigned char)c&0x08));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-		digitalWrite(SDA1,((unsigned char)c&0x04));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-		digitalWrite(SDA1,((unsigned char)c&0x02));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-		digitalWrite(SDA1,((unsigned char)c&0x01));digitalWrite(SCL1,LOW);digitalWrite(SCL1,HIGH);
-		delayP(gTime);
-		digitalWrite(I2cCS,HIGH);
-		delayP(gTime);
-	}
-	else
-	{
 		digitalWrite(RS,1);
 		delayP(gTime);
 		digitalWrite(CS,0);
 		delayP(gTime);
-		if(c>>8&0x01)
-		{
-			digitalWrite(D0,1);
-		}
-		else
-		{
-			digitalWrite(D0,0);
-		}
-		if(c>>8&0x02)
-		{
-			digitalWrite(D1,1);
-		}
-		else
-		{
-			digitalWrite(D1,0);
-		}
-		if(c>>8&0x04)
-		{
-			digitalWrite(D2,1);
-		}
-		else
-		{
-			digitalWrite(D2,0);
-		}
-		if(c>>8&0x08)
-		{
-			digitalWrite(D3,1);
-		}
-		else
-		{
-			digitalWrite(D3,0);
-		}
-		if(c>>8&0x10)
-		{
-			digitalWrite(D4,1);
-		}
-		else
-		{
-			digitalWrite(D4,0);
-		}
-		if(c>>8&0x20)
-		{
-			digitalWrite(D5,1);
-		}
-		else
-		{
-			digitalWrite(D5,0);
-		}
-		if(c>>8&0x40)
-		{
-			digitalWrite(D6,1);
-		}
-		else
-		{
-			digitalWrite(D6,0);
-		}
-		if(c>>8&0x80)
-		{
-			digitalWrite(D7,1);
-		}
-		else
-		{
-			digitalWrite(D7,0);
-		}
-		digitalWrite(WR,0);
-		delayP(gTime);
-		digitalWrite(WR,1);
-		delayP(gTime);
-		if(c&0x01)
-		{
-			digitalWrite(D0,1);
-		}
-		else
-		{
-			digitalWrite(D0,0);
-		}
-		if(c&0x02)
-		{
-			digitalWrite(D1,1);
-		}
-		else
-		{
-			digitalWrite(D1,0);
-		}
-		if(c&0x04)
-		{
-			digitalWrite(D2,1);
-		}
-		else
-		{
-			digitalWrite(D2,0);
-		}
-		if(c&0x08)
-		{
-			digitalWrite(D3,1);
-		}
-		else
-		{
-			digitalWrite(D3,0);
-		}
-		if(c&0x10)
-		{
-			digitalWrite(D4,1);
-		}
-		else
-		{
-			digitalWrite(D4,0);
-		}
-		if(c&0x20)
-		{
-			digitalWrite(D5,1);
-		}
-		else
-		{
-			digitalWrite(D5,0);
-		}
-		if(c&0x40)
-		{
-			digitalWrite(D6,1);
-		}
-		else
-		{
-			digitalWrite(D6,0);
-		}
-		if(c&0x80)
-		{
-			digitalWrite(D7,1);
-		}
-		else
-		{
-			digitalWrite(D7,0);
-		}
+                setDataBus(c);
 		digitalWrite(WR,0);
 		delayP(gTime);
 		digitalWrite(WR,1);
 		delayP(gTime);
 		digitalWrite(CS,1);
-	}
 
 }
 void WriteCommandData(unsigned int cmd,unsigned int dat)
@@ -1803,27 +1416,28 @@ void drawBitmap(int x, int y, int sx, int sy, unsigned int* data, int deg, int r
 
 	if (deg==0)
 		drawBitmapP(x, y, sx, sy, data,0);
-	else
-	{
-		for (ty=0; ty<sy; ty++)
-			for (tx=0; tx<sx; tx++)
-			{
-				col=*(&data[(ty*sx)+tx]);
+         else
+ {
+  for (ty=0; ty<sy; ty++)
+   for (tx=0; tx<sx; tx++)
+   {
+    col=*(&data[(ty*sx)+tx]);
 
-				newx=x+rox+(((tx-rox)*cos(radian))-((ty-roy)*sin(radian)));
-				newy=y+roy+(((ty-roy)*cos(radian))+((tx-rox)*sin(radian)));
+    newx=x+rox+(((tx-rox)*cos(radian))-((ty-roy)*sin(radian)));
+    newy=y+roy+(((ty-roy)*cos(radian))+((tx-rox)*sin(radian)));
 
-				SetXY(newx, newy, newx, newy);
-				WriteData((col<<8)|col);
-			}
-	}
-	clrXY();
+    SetXY(newx, newy, newx, newy);
+    WriteData((col<<8)|col);
+   }
+ }
+ clrXY();
 }
+
 void drawBitmapP(int x, int y, int sx, int sy, unsigned int* data, int scale)
 {
-	unsigned int col;
-	int tx, ty, tc, tsx, tsy;
-	unsigned char r, g, b;
+ unsigned int col;
+ int tx, ty, tc, tsx, tsy;
+ unsigned char r, g, b;
 
 	if (scale==1)
 	{
@@ -1888,225 +1502,5 @@ void drawBitmapP(int x, int y, int sx, int sy, unsigned int* data, int scale)
 		}
 	}
 	clrXY();
-	}
-}
-void Touch_Init(void)
-{
-//	orient					= PORTRAIT;
-	_default_orientation		= CAL_S>>31;
-	touch_x_left			= (CAL_X>>14) & 0x3FFF;
-	touch_x_right			= CAL_X & 0x3FFF;
-	touch_y_top				= (CAL_Y>>14) & 0x3FFF;
-	touch_y_bottom			= CAL_Y & 0x3FFF;
-	disp_x_size				= (CAL_S>>12) & 0x0FFF;
-	disp_y_size				= CAL_S & 0x0FFF;
-	prec					= 10;
-
-	pinMode(T_CLK,  OUTPUT);
-//	pinMode(T_CS,   OUTPUT);
-	pinMode(T_DIN,  OUTPUT);
-	pinMode(T_DOUT, INPUT);
-	pinMode(T_IRQ,  INPUT);
-
-//	digitalWrite(T_CS,  HIGH);
-	digitalWrite(T_CLK, HIGH);
-	digitalWrite(T_DIN, HIGH);
-	digitalWrite(T_CLK, HIGH);
-}
-
-void Touch_WriteData(unsigned char data)
-{
-	unsigned char temp;
-	unsigned char nop;
-	unsigned char count;
-
-	temp=data;
-	digitalWrite(T_CLK,0);
-
-	for(count=0; count<8; count++)
-	{
-		if(temp & 0x80)
-		{
-			digitalWrite(T_DIN, 1);
-		}
-		else
-		{
-			digitalWrite(T_DIN, 0);
-		}
-
-		temp = temp << 1;
-		digitalWrite(T_CLK, 0);
-		nop++;
-		digitalWrite(T_CLK, 1);
-		nop++;
-	}
-
-}
-unsigned int Touch_ReadData(void)
-{
-	unsigned char nop;
-	unsigned int data = 0;
-	unsigned char count;
-
-		for(count=0; count<12; count++)
-		{
-			data <<= 1;
-			digitalWrite(T_CLK, 1);
-			nop++;
-			digitalWrite(T_CLK, 0);
-			nop++;
-			if (digitalRead(T_DOUT))
-			{
-				data++;
-			}
-		}
-
-	return(data);
-}
-void Touch_Read(void)
-{
-	unsigned long tx=0, temp_x=0;
-	unsigned long ty=0, temp_y=0;
-	int datacount=0;
-	int i;
-
-	//digitalWrite(T_CS,0);
-	for (i=0; i<prec; i++)
-	{
-		Touch_WriteData(0x90);
-		digitalWrite(T_CLK,1);
-		digitalWrite(T_CLK,0);
-		temp_x=Touch_ReadData();
-		Touch_WriteData(0xD0);
-		digitalWrite(T_CLK,1);
-		digitalWrite(T_CLK,0);
-		temp_y=Touch_ReadData();
-			ty+=temp_x;
-			tx+=temp_y;
-			datacount++;
-
-	}
-
-//	digitalWrite(T_CS,1);
-
-	if (datacount>0)
-	{
-		if (orient == _default_orientation)
-		{
-			TP_X=tx/datacount;
-			TP_Y=ty/datacount;
-		}
-		else
-		{
-			TP_X=ty/datacount;
-			TP_Y=tx/datacount;
-		}
-	}
-	else
-	{
-		TP_X=-1;
-		TP_Y=-1;
-	}
-
-}
-
-char Touch_DataAvailable(void)
-{
-	char avail;
-
-	pinMode(T_IRQ,  INPUT);
-	avail = !digitalRead(T_IRQ);
-	//pinMode(T_IRQ,  OUTPUT);
-
-	return avail;
-}
-int Touch_GetX(void)
-{
-	long c;
-
-	//if (orient == _default_orientation)
-	if(0)
-	{
-		c = (long)((long)(TP_X - touch_x_left) * (disp_x_size)) / (long)(touch_x_right - touch_x_left);
-		//if (c<0)
-		//	c = 0;
-		//if (c>disp_x_size)
-		//	c = disp_x_size;
-	}
-	else
-	{
-		if (_default_orientation == PORTRAIT)
-			c = (long)((long)(TP_X - touch_y_top) * (-disp_y_size)) / (long)(touch_y_bottom - touch_y_top) + (long)(disp_y_size);
-		else
-			c = (long)((long)(TP_X - touch_y_top) * (disp_y_size)) / (long)(touch_y_bottom - touch_y_top);
-		//if (c<0)
-		//	c = 0;
-		//if (c>disp_y_size)
-		//	c = disp_y_size;
-	}
-	if(gLCDSize == LCD_28)
-	{
-	c = (c-42)*320/(326-42);
-	}
-	else
-	{
-	c = (320-c);
-	}
-	return c;
-}
-int Touch_GetY(void)
-{
-	int c;
-
-	//if (orient == _default_orientation)
-	if(1)
-	{
-		c = (long)((long)(TP_Y - touch_y_top) * (disp_y_size)) / (long)(touch_y_bottom - touch_y_top);
-		//if (c<0)
-		//	c = 0;
-		//if (c>disp_y_size)
-		//	c = disp_y_size;
-	}
-	else
-	{
-		if (_default_orientation == PORTRAIT)
-			c = (long)((long)(TP_Y - touch_x_left) * (disp_x_size)) / (long)(touch_x_right - touch_x_left);
-		else
-			c = (long)((long)(TP_Y - touch_x_left) * (-disp_x_size)) / (long)(touch_x_right - touch_x_left) + (long)(disp_x_size);
-		//if (c<0)
-		//	c = 0;
-		//if (c>disp_x_size)
-		//	c = disp_x_size;
-	}
-	if(gLCDSize == LCD_28)
-	{
-	c = (c-29)*240/(325-29);
-	}
-	else
-	{
-	c = (c*240/320);
-	}
-
-	return c;
-}
-void setPrecision(unsigned char precision)
-{
-	switch (precision)
-	{
-		case PREC_LOW:
-			prec=1;
-			break;
-		case PREC_MEDIUM:
-			prec=10;
-			break;
-		case PREC_HI:
-			prec=25;
-			break;
-		case PREC_EXTREME:
-			prec=100;
-			break;
-		default:
-			prec=10;
-			break;
 	}
 }

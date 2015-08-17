@@ -10,7 +10,7 @@ OPENOCD_PATH=/usr/share/openocd/scripts
 
 #  List of the objects files to be compiled/assembled
 
-SOURCES=src/main.c
+SOURCES=src/main.c src/lcd.c src/SFont.c
 SPL_SOURCES=stm32f10x_rcc.c stm32f10x_gpio.c
 SPL_OBJECTS=$(SPL_SOURCES:.c=.o)
 SYSTEM_STM32_SOURCE=$(DEVICE_CMSIS_PATH)/system_stm32f10x.c

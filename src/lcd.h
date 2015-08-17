@@ -1,22 +1,3 @@
-/*#define RS	15
-#define CS	16
-#define WR	1
-#define RST	4
-
-#define D0	8
-#define D1	9
-#define D2	7
-#define D3	0
-#define D4	2
-#define D5	3
-#define D6	12
-#define D7	13
-
-#define T_DOUT	5
-#define T_IRQ	6
-#define T_DIN	10
-#define T_CLK	11
-*/
 #define LCD_18	18
 #define LCD_22	22
 #define LCD_22SPI	23
@@ -31,13 +12,13 @@
 
 #define RIGHT 			9999
 #define CENTER 			9998
+
+extern void setDataBus(int c);
+
 void delayP(int a);
 void DspSignalColor(unsigned char h,unsigned char l);
-void WriteCommandI2c(unsigned char c);
 void LCDInit(void);
-void SetPinNU(short P0,short P1,short P2,short P3,short P4,short P5,short P6,short P7,
-			  short Prs,short Pcs,short Pwr,short Prst,short Pdout,short Pirq,short Pdin,short Pclk);
-void SetPinI2C(int cs,int scl,int sda,int rs,int rst,int gnd,int vin);
+void SetPinNU(int Rrs, int Rcs, int Rwr, int Rrst);
 void SetLCDSize(int a);
 //void swap(unsigned int i,unsigned int j);
 void WriteCommand(unsigned int c);
@@ -69,13 +50,6 @@ void fillCircle(int x, int y, int radius);
 unsigned short int PgmRead(unsigned short int *p);
 void printChar(unsigned char c, int x, int y);
 void setFont(unsigned short int mxsize,unsigned short int mysize,unsigned short int moffset);
-void Touch_Init(void);
-void Touch_WriteData(unsigned char data);
-unsigned int Touch_ReadData(void);
-void Touch_Read(void);
-char Touch_DataAvailable(void);
-int Touch_GetX(void);
-int Touch_GetY(void);
 void rotateChar(unsigned char c, int x, int y, int pos, int deg);
 void print(char *st, int x, int y, int deg);
 //void print(String st, int x, int y, int deg);
@@ -88,4 +62,3 @@ void printNumI(long num, int x, int y, int length, char filler);
 void printNumF(double num, unsigned char dec, int x, int y, char divider, int length, char filler);
 void drawBitmap(int x, int y, int sx, int sy, unsigned int* data, int deg, int rox, int roy);
 void drawBitmapP(int x, int y, int sx, int sy, unsigned int* data, int scale);
-void setPrecision(unsigned char precision);
