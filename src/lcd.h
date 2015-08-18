@@ -14,18 +14,17 @@
 #define CENTER                  9998
 
 extern void setDataBus(int c);
+extern void digitalWrite(int, char);
+extern void delay(int);
 
-void delayP(int a);
-void DspSignalColor(unsigned char h,unsigned char l);
 void LCDInit(void);
-void SetPinNU(int Rrs, int Rcs, int Rwr, int Rrst);
-void SetLCDSize(int a);
+void SetPinNU(int, int, int, int);
+void SetLCDSize(int);
 //void swap(unsigned int i,unsigned int j);
 void WriteCommand(unsigned int c);
 void WriteData(unsigned int c);
 void WriteCommandData(unsigned int cmd,unsigned int dat);
 void SetXY(unsigned int x0,unsigned int y0,unsigned int x1,unsigned int y1);
-void Pant(unsigned int color);
 void fillScr(unsigned int color);
 void fillScrRGB(int r, int g, int b);
 void clrScr();
@@ -47,13 +46,12 @@ void fillRect(int x1, int y1, int x2, int y2);
 void fillRoundRect(int x1, int y1, int x2, int y2);
 void drawCircle(int x, int y, int radius);
 void fillCircle(int x, int y, int radius);
-unsigned short int PgmRead(unsigned short int *p);
 void printChar(unsigned char c, int x, int y);
 void setFont(unsigned short int mxsize,unsigned short int mysize,unsigned short int moffset);
 void rotateChar(unsigned char c, int x, int y, int pos, int deg);
 void print(char *st, int x, int y, int deg);
 //void print(String st, int x, int y, int deg);
-unsigned char* getFont();
+const unsigned char* getFont();
 unsigned int getFontXsize();
 unsigned int getFontYsize();
 int getDisplayXSize();

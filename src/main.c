@@ -16,7 +16,7 @@ void delay(int ms) {
   for(i = 0; i < ms; i++);
 }
 
-void digitalWrite(int pin, short value) {
+void digitalWrite(int pin, char value) {
   if(value == 1) {
     GPIOA->BSRR = pin;
   } else {
@@ -63,7 +63,7 @@ int main()
   setBackColor(0xf800);
 
   printf("Init is ok!\n");
-  setDataBus(0x1f13);
+  setDataBus(0xff37);
   //while(1);
 
   while(1)
@@ -272,5 +272,6 @@ int main()
 
       setColorRGB(0, 255, 0);
       setBackColorRGB(0, 0, 255);
+      delay(2000);
     }
 }
