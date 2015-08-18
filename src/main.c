@@ -4,6 +4,11 @@
 #include "math.h"
 #include "lcd.h"
 
+#define RS GPIO_Pin_0
+#define CS GPIO_Pin_2
+#define WR GPIO_Pin_3
+#define RST GPIO_Pin_4
+
 void delay(int ms) {
   volatile int i;
   for(i = 0; i < ms; i++);
@@ -22,9 +27,9 @@ void setDataBus(int c) {
   //printf("ODR: %04x, ", GPIOB->ODR);
   GPIOB->BSRR = (c & 0xff00) | (~(c & 0xff00) << 16);
   delay(10);
-  digitalWrite(GPIO_Pin_5, 0);
+  digitalWrite(WR, 0);
   delay(10);
-  digitalWrite(GPIO_Pin_5, 1);
+  digitalWrite(WR, 1);
   delay(10);
   GPIOB->BSRR = ((c << 8) & 0xff00) | (~((c << 8) & 0xff00) << 16);
   //printf("ODR: %04x\n", GPIOB->ODR);
@@ -51,7 +56,7 @@ int main()
   int x, y;
   int i;
 
-  SetPinNU(GPIO_Pin_4, GPIO_Pin_6, GPIO_Pin_5, GPIO_Pin_7);
+  SetPinNU(RS, CS, WR, RST);
   SetLCDSize(LCD_28);
   LCDInit();
   setFont(8,12,32);
