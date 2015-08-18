@@ -9,6 +9,8 @@
 #define WR GPIO_Pin_3
 #define RST GPIO_Pin_4
 
+#define write_BSRR(byte, mask) (byte & mask) | ((~byte & mask) << 16)
+
 void delay(int ms) {
   volatile int i;
   for(i = 0; i < ms; i++);
@@ -25,13 +27,10 @@ void digitalWrite(int pin, short value) {
 void setDataBus(int c) {
   //printf("Byte: %08x, ", c);
   //printf("ODR: %04x, ", GPIOB->ODR);
-  GPIOB->BSRR = (c & 0xff00) | (~(c & 0xff00) << 16);
-  delay(10);
-  digitalWrite(WR, 0);
-  delay(10);
-  digitalWrite(WR, 1);
-  delay(10);
-  GPIOB->BSRR = ((c << 8) & 0xff00) | (~((c << 8) & 0xff00) << 16);
+  GPIOB->BSRR = write_BSRR(c, 0xff00);
+  //Convert 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1
+  //To      0 0 0 1 1 1 1 1 1 1 1 0 0 0 0 0
+  GPIOA->BSRR = write_BSRR(c << 5, 0x1fe0);
   //printf("ODR: %04x\n", GPIOB->ODR);
   //printf("GPIOA: %04x, GPIOB: %04x\n", GPIOA->ODR, GPIOB->ODR);
 }
