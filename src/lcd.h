@@ -1,17 +1,17 @@
-#define LCD_18	18
-#define LCD_22	22
-#define LCD_22SPI	23
-#define LCD_24	24
-#define LCD_25	25
-#define LCD_28	28
+#define LCD_18  18
+#define LCD_22  22
+#define LCD_22SPI       23
+#define LCD_24  24
+#define LCD_25  25
+#define LCD_28  28
 
-#define swap(i,j)	{int t;t=i;i=j;j=t;}
-#define CAL_X 				0x00378F66UL
-#define CAL_Y 				0x03C34155UL
-#define CAL_S 				0x000EF13FUL
+#define swap(i,j)       {int t;t=i;i=j;j=t;}
+#define CAL_X                           0x00378F66UL
+#define CAL_Y                           0x03C34155UL
+#define CAL_S                           0x000EF13FUL
 
-#define RIGHT 			9999
-#define CENTER 			9998
+#define RIGHT                   9999
+#define CENTER                  9998
 
 extern void setDataBus(int c);
 

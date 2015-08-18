@@ -104,9 +104,9 @@ const unsigned char PSmallFont[1144]={
 };
 
 // BigFont.c (C)2010 by Henning Karlsen
-// Font Size	: 16x16
-// Memory usage	: 3044 bytes
-// # characters	: 95
+// Font Size    : 16x16
+// Memory usage : 3044 bytes
+// # characters : 95
 
 const unsigned char PBigFont[3044]={
 0x10,0x10,0x20,0x5F,
@@ -213,9 +213,9 @@ const unsigned char PBigFont[3044]={
 };
 
 // SevenSegNumFont.c
-// Font Size	: 32x50
-// Memory usage	: 2004 bytes
-// # characters	: 10
+// Font Size    : 32x50
+// Memory usage : 2004 bytes
+// # characters : 10
 
 const unsigned char PSevenSegNumFont[2004]={
 0x20,0x32,0x30,0x0A,
