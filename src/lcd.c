@@ -28,67 +28,16 @@ void SetLCDSize(int a)
   gLCDSize = a;
 }
 
-void WriteCommand(unsigned int c)
-{
-  digitalWrite(RS,0);
-  digitalWrite(CS,0);
-  setDataBus(c);
-  digitalWrite(WR,0);
-  digitalWrite(WR,1);
-  digitalWrite(CS,1);
-}
-void WriteData(unsigned int c)
-{
-  digitalWrite(RS,1);
-  digitalWrite(CS,0);
-  setDataBus(c);
-  digitalWrite(WR,0);
-  digitalWrite(WR,1);
-  digitalWrite(CS,1);
-
-}
-void WriteCommandData(unsigned int cmd,unsigned int dat)
-{
-  WriteCommand(cmd);
-  WriteData(dat);
-}
-
-void SetXY(unsigned int x0,unsigned int y0,unsigned int x1,unsigned int y1)
-{
-
-
-  switch(gLCDSize)
-    {
-    case LCD_28:
-      swap(x0, y0);
-      swap(x1, y1);
-      y0=lcd_y_size-y0;
-      y1=lcd_y_size-y1;
-      swap(y0, y1);
-
-      WriteCommandData(0x20,x0);
-      WriteCommandData(0x21,y0);
-      WriteCommandData(0x50,x0);
-      WriteCommandData(0x52,y0);
-      WriteCommandData(0x51,x1);
-      WriteCommandData(0x53,y1);
-      WriteCommand(0x22);
-      break;
-    default:
-      break;
-    }
-}
-
 void fillScr(unsigned int color)
 {
   int i,j;
-  SetXY(0,0,lcd_y_size,lcd_x_size);
+  set_xy(0,0,lcd_y_size,lcd_x_size);
 
   for(i=0;i<lcd_x_size;i++)
     {
       for (j=0;j<lcd_y_size;j++)
         {
-          WriteData(color);
+          set_pixel(color);
         }
     }
 }
@@ -104,36 +53,26 @@ void fillScrRGB(int r, int g, int b)
 void clrScr()
 {
   unsigned int i,j;
-  SetXY(0,0,lcd_y_size,lcd_x_size);
+  set_xy(0,0,lcd_y_size,lcd_x_size);
   for(i=0;i<240;i++)
     {
       for(j=0;j<320;j++)
         {
-          WriteData(0x0000);
+          set_pixel(0x0000);
         }
     }
 
 }
-void LcdOff()
-{
-  WriteCommand(0x28);
-}
-
-void LcdOn()
-{
-  WriteCommand(0x29);
-}
-
 void clrXY()
 {
   //	if (lcd_orientation==PORTRAIT)
   if(0)
     {
-      SetXY(0,0,lcd_x_size,lcd_y_size);
+      set_xy(0,0,lcd_x_size,lcd_y_size);
     }
   else
     {
-      SetXY(0,0,lcd_y_size,lcd_x_size);
+      set_xy(0,0,lcd_y_size,lcd_x_size);
     }
 }
 void setColor(long int color)
@@ -172,11 +111,11 @@ void drawHLine(int x, int y, int l)
       y -= l;
     }
 
-  SetXY(x,y,x+l,y);
+  set_xy(x,y,x+l,y);
 
   for (j=x;j<x+l;j++)
     {
-      WriteData((fch<<8)|fcl);
+      set_pixel((fch<<8)|fcl);
     }
 
   clrXY();
@@ -191,10 +130,10 @@ void drawVLine(int x, int y, int l)
       y -= l;
     }
 
-  SetXY(x,y,x,y+l);
+  set_xy(x,y,x,y+l);
   for (j=y;j<y+l;j++)
     {
-      WriteData((fch<<8)|fcl);
+      set_pixel((fch<<8)|fcl);
     }
 
   clrXY();
@@ -226,8 +165,8 @@ void drawLine(int x1, int y1, int x2, int y2)
           t = - (dy >> 1);
           while (1)
             {
-              SetXY (col, row, col, row);
-              WriteData((fch<<8)|fcl);
+              set_xy (col, row, col, row);
+              set_pixel((fch<<8)|fcl);
               if (row == y2)
                 return;
               row += ystep;
@@ -244,8 +183,8 @@ void drawLine(int x1, int y1, int x2, int y2)
           t = - (dx >> 1);
           while (1)
             {
-              SetXY (col, row, col, row);
-              WriteData ((fch<<8)|fcl);
+              set_xy (col, row, col, row);
+              set_pixel ((fch<<8)|fcl);
               if (col == x2)
                 return;
               col += xstep;
@@ -284,13 +223,9 @@ void drawRoundRect(int x1, int y1, int x2, int y2)
 }
 void drawPixel(int x, int y)
 {
-  SetXY(x, y, x, y);
-  //	SetXY(y,x,y,x);
-  setPixel((fch<<8)|fcl);
-}
-void setPixel(int color)
-{
-  WriteData(color);
+  set_xy(x, y, x, y);
+  //	set_xy(y,x,y,x);
+  set_pixel((fch<<8)|fcl);
 }
 void fillRect(int x1, int y1, int x2, int y2)
 {
@@ -303,10 +238,10 @@ void fillRect(int x1, int y1, int x2, int y2)
     {
       swap(y1, y2);
     }
-  SetXY(x1, y1, x2, y2);
-  WriteData((fch<<8)|fcl);
+  set_xy(x1, y1, x2, y2);
+  set_pixel((fch<<8)|fcl);
 
-  WriteData(((long)(x2-x1)+1)*((long)(y2-y1)+1));
+  set_pixel(((long)(x2-x1)+1)*((long)(y2-y1)+1));
   if (lcd_orientation==PORTRAIT)
     //	if(0)
     {
@@ -372,18 +307,18 @@ void drawCircle(int x, int y, int radius)
   int x1 = 0;
   int y1 = radius;
 
-  SetXY(x, y + radius, x, y + radius);
+  set_xy(x, y + radius, x, y + radius);
 
-  WriteData((fch<<8)|fcl);
-  SetXY(x, y - radius, x, y - radius);
+  set_pixel((fch<<8)|fcl);
+  set_xy(x, y - radius, x, y - radius);
 
-  WriteData((fch<<8)|fcl);
-  SetXY(x + radius, y, x + radius, y);
+  set_pixel((fch<<8)|fcl);
+  set_xy(x + radius, y, x + radius, y);
 
-  WriteData((fch<<8)|fcl);
-  SetXY(x - radius, y, x - radius, y);
+  set_pixel((fch<<8)|fcl);
+  set_xy(x - radius, y, x - radius, y);
 
-  WriteData((fch<<8)|fcl);
+  set_pixel((fch<<8)|fcl);
 
   while(x1 < y1)
     {
@@ -396,30 +331,30 @@ void drawCircle(int x, int y, int radius)
       x1++;
       ddF_x += 2;
       f += ddF_x;
-      SetXY(x + x1, y + y1, x + x1, y + y1);
+      set_xy(x + x1, y + y1, x + x1, y + y1);
 
-      WriteData((fch<<8)|fcl);
-      SetXY(x - x1, y + y1, x - x1, y + y1);
+      set_pixel((fch<<8)|fcl);
+      set_xy(x - x1, y + y1, x - x1, y + y1);
 
-      WriteData((fch<<8)|fcl);
-      SetXY(x + x1, y - y1, x + x1, y - y1);
+      set_pixel((fch<<8)|fcl);
+      set_xy(x + x1, y - y1, x + x1, y - y1);
 
-      WriteData((fch<<8)|fcl);
-      SetXY(x - x1, y - y1, x - x1, y - y1);
+      set_pixel((fch<<8)|fcl);
+      set_xy(x - x1, y - y1, x - x1, y - y1);
 
-      WriteData((fch<<8)|fcl);
-      SetXY(x + y1, y + x1, x + y1, y + x1);
+      set_pixel((fch<<8)|fcl);
+      set_xy(x + y1, y + x1, x + y1, y + x1);
 
-      WriteData((fch<<8)|fcl);
-      SetXY(x - y1, y + x1, x - y1, y + x1);
+      set_pixel((fch<<8)|fcl);
+      set_xy(x - y1, y + x1, x - y1, y + x1);
 
-      WriteData((fch<<8)|fcl);
-      SetXY(x + y1, y - x1, x + y1, y - x1);
+      set_pixel((fch<<8)|fcl);
+      set_xy(x + y1, y - x1, x + y1, y - x1);
 
-      WriteData((fch<<8)|fcl);
-      SetXY(x - y1, y - x1, x - y1, y - x1);
+      set_pixel((fch<<8)|fcl);
+      set_xy(x - y1, y - x1, x - y1, y - x1);
 
-      WriteData((fch<<8)|fcl);
+      set_pixel((fch<<8)|fcl);
     }
   clrXY();
 }
@@ -466,7 +401,7 @@ void printChar(unsigned char c, int x, int y)
   if (lcd_orientation==PORTRAIT)
     //	if(0)
     {
-      SetXY(x,y,x+x_Size-1,y+y_Size-1);
+      set_xy(x,y,x+x_Size-1,y+y_Size-1);
       temp=((c-offset)*((x_Size/8)*y_Size))+4;
       for(j=0;j<((x_Size/8)*y_Size);j++)
         {
@@ -475,11 +410,11 @@ void printChar(unsigned char c, int x, int y)
             {
               if((ch&(1<<(7-i)))!=0)
                 {
-                  setPixel((fch<<8)|fcl);
+                  set_pixel((fch<<8)|fcl);
                 }
               else
                 {
-                  setPixel((bch<<8)|bcl);
+                  set_pixel((bch<<8)|bcl);
                 }
             }
           temp++;
@@ -491,7 +426,7 @@ void printChar(unsigned char c, int x, int y)
 
       for(j=0;j<((x_Size/8)*y_Size);j+=(x_Size/8))
         {
-          SetXY(x,y+(j/(x_Size/8)),x+x_Size-1,y+(j/(x_Size/8)));
+          set_xy(x,y+(j/(x_Size/8)),x+x_Size-1,y+(j/(x_Size/8)));
           for (zz=(x_Size/8)-1; zz>=0; zz--)
             {
               ch = (unsigned char)*(&font[temp+zz]);
@@ -499,11 +434,11 @@ void printChar(unsigned char c, int x, int y)
                 {
                   if((ch&(1<<i))!=0)
                     {
-                      setPixel((fch<<8)|fcl);
+                      set_pixel((fch<<8)|fcl);
                     }
                   else
                     {
-                      setPixel((bch<<8)|bcl);
+                      set_pixel((bch<<8)|bcl);
                     }
                 }
             }
@@ -547,14 +482,14 @@ void rotateChar(unsigned char c, int x, int y, int pos, int deg)
               newx=x+(((i+(zz*8)+(pos*x_Size))*cos(radian))-((j)*sin(radian)));
               newy=y+(((j)*cos(radian))+((i+(zz*8)+(pos*x_Size))*sin(radian)));
 
-              SetXY(newx,newy,newx+1,newy+1);
+              set_xy(newx,newy,newx+1,newy+1);
               if((ch&(1<<(7-i)))!=0)
                 {
-                  setPixel((fch<<8)|fcl);
+                  set_pixel((fch<<8)|fcl);
                 }
               else
                 {
-                  setPixel((bch<<8)|bcl);
+                  set_pixel((bch<<8)|bcl);
                 }
             }
         }
@@ -802,8 +737,8 @@ void drawBitmap(int x, int y, int sx, int sy, unsigned int* data, int deg, int r
             newx=x+rox+(((tx-rox)*cos(radian))-((ty-roy)*sin(radian)));
             newy=y+roy+(((ty-roy)*cos(radian))+((tx-rox)*sin(radian)));
 
-            SetXY(newx, newy, newx, newy);
-            WriteData((col<<8)|col);
+            set_xy(newx, newy, newx, newy);
+            set_pixel((col<<8)|col);
           }
     }
   clrXY();
@@ -818,22 +753,22 @@ void drawBitmapP(int x, int y, int sx, int sy, unsigned int* data, int scale)
     {
       if (lcd_orientation==PORTRAIT)
         {
-          SetXY(x, y, x+sx-1, y+sy-1);
+          set_xy(x, y, x+sx-1, y+sy-1);
           for (tc=0; tc<(sx*sy); tc++)
             {
               col=*(&data[tc]);
-              WriteData((col>>8)|col);
+              set_pixel((col>>8)|col);
             }
         }
       else
         {
           for (ty=0; ty<sy; ty++)
             {
-              SetXY(x, y+ty, x+sx-1, y+ty);
+              set_xy(x, y+ty, x+sx-1, y+ty);
               for (tx=sx; tx>=0; tx--)
                 {
                   col=*(&data[(ty*sx)+tx]);
-                  WriteData((col>>8)|col);
+                  set_pixel((col>>8)|col);
                 }
             }
 
@@ -845,13 +780,13 @@ void drawBitmapP(int x, int y, int sx, int sy, unsigned int* data, int scale)
         {
           for (ty=0; ty<sy; ty++)
             {
-              SetXY(x, y+(ty*scale), x+((sx*scale)-1), y+(ty*scale)+scale);
+              set_xy(x, y+(ty*scale), x+((sx*scale)-1), y+(ty*scale)+scale);
               for (tsy=0; tsy<scale; tsy++)
                 for (tx=0; tx<sx; tx++)
                   {
                     col=*(&data[(ty*sx)+tx]);
                     for (tsx=0; tsx<scale; tsx++)
-                      WriteData((col>>8)|col);
+                      set_pixel((col>>8)|col);
                   }
             }
         }
@@ -861,11 +796,11 @@ void drawBitmapP(int x, int y, int sx, int sy, unsigned int* data, int scale)
             {
               for (tsy=0; tsy<scale; tsy++)
                 {
-                  SetXY(x, y+(ty*scale)+tsy, x+((sx*scale)-1), y+(ty*scale)+tsy);
+                  set_xy(x, y+(ty*scale)+tsy, x+((sx*scale)-1), y+(ty*scale)+tsy);
                   for (tx=sx; tx>=0; tx--)
                     {
                       col=*(&data[(ty*sx)+tx]);
-                      WriteData((col>>8)|col);
+                      set_pixel((col>>8)|col);
                     }
                 }
             }

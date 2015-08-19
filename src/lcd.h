@@ -5,9 +5,13 @@
 
 extern const uint16_t lcd_x_size;
 extern const uint16_t lcd_y_size;
-extern uint16_t RS, CS, WR, RST;
 
+/* Functions to override by LCD driver */
 void lcd_init();
+void set_xy(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t y1);
+void set_pixel(uint16_t color);
+void lcd_off();
+void lcd_on();
 
 /* Unprocessed */
 #define LCD_18  18
@@ -34,12 +38,9 @@ void SetLCDSize(int);
 void WriteCommand(unsigned int c);
 void WriteData(unsigned int c);
 void WriteCommandData(unsigned int cmd,unsigned int dat);
-void SetXY(unsigned int x0,unsigned int y0,unsigned int x1,unsigned int y1);
 void fillScr(unsigned int color);
 void fillScrRGB(int r, int g, int b);
 void clrScr();
-void LcdOff();
-void LcdOn();
 void clrXY();
 void setColor(long int color);
 void setColorRGB(int r, int g, int b);
@@ -51,7 +52,6 @@ void drawVLine(int x, int y, int l);
 void drawLine(int x1, int y1, int x2, int y2);
 void drawRoundRect(int x1, int y1, int x2, int y2);
 void drawPixel(int x, int y);
-void setPixel(int color);
 void fillRect(int x1, int y1, int x2, int y2);
 void fillRoundRect(int x1, int y1, int x2, int y2);
 void drawCircle(int x, int y, int radius);
