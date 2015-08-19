@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #define LCD_18  18
 #define LCD_22  22
 #define LCD_22SPI       23
@@ -12,6 +14,9 @@
 
 #define RIGHT                   9999
 #define CENTER                  9998
+
+extern const uint16_t lcd_x_size;
+extern const uint16_t lcd_y_size;
 
 extern void setDataBus(int c);
 extern void digitalWrite(int, char);

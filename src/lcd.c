@@ -17,7 +17,6 @@ int fch,fcl,bch,bcl;
 int orient;
 unsigned short int x_Size,y_Size,offset;
 const unsigned char* font;
-unsigned long int  disp_x_size,disp_y_size;
 unsigned long int  touch_x_left, touch_x_right, touch_y_top, touch_y_bottom;
 unsigned long int  _default_orientation;
 unsigned char      prec;
@@ -40,31 +39,6 @@ void SetLCDSize(int a)
 
 void LCDInit(void)
 {
-  switch(gLCDSize)
-    {
-    case LCD_18:
-      disp_x_size=127;
-      disp_y_size=159;
-      break;
-    case LCD_22SPI:
-      disp_x_size=175;
-      disp_y_size=219;
-      break;
-    case LCD_22:
-      disp_x_size=175;
-      disp_y_size=219;
-      break;
-    case LCD_24:
-      disp_x_size=239;
-      disp_y_size=319;
-      break;
-    case LCD_28:
-      disp_x_size=239;
-      disp_y_size=319;
-      break;
-    default:
-      break;
-    }
   orient=LANDSCAPE;
   digitalWrite(RST, 1);
   digitalWrite(RST, 0);
@@ -174,8 +148,8 @@ void SetXY(unsigned int x0,unsigned int y0,unsigned int x1,unsigned int y1)
     case LCD_28:
       swap(x0, y0);
       swap(x1, y1);
-      y0=disp_y_size-y0;
-      y1=disp_y_size-y1;
+      y0=lcd_y_size-y0;
+      y1=lcd_y_size-y1;
       swap(y0, y1);
 
       WriteCommandData(0x20,x0);
@@ -194,11 +168,11 @@ void SetXY(unsigned int x0,unsigned int y0,unsigned int x1,unsigned int y1)
 void fillScr(unsigned int color)
 {
   int i,j;
-  SetXY(0,0,disp_y_size,disp_x_size);
+  SetXY(0,0,lcd_y_size,lcd_x_size);
 
-  for(i=0;i<disp_x_size;i++)
+  for(i=0;i<lcd_x_size;i++)
     {
-      for (j=0;j<disp_y_size;j++)
+      for (j=0;j<lcd_y_size;j++)
         {
           WriteData(color);
         }
@@ -216,7 +190,7 @@ void fillScrRGB(int r, int g, int b)
 void clrScr()
 {
   unsigned int i,j;
-  SetXY(0,0,disp_y_size,disp_x_size);
+  SetXY(0,0,lcd_y_size,lcd_x_size);
   for(i=0;i<240;i++)
     {
       for(j=0;j<320;j++)
@@ -241,11 +215,11 @@ void clrXY()
   //	if (orient==PORTRAIT)
   if(0)
     {
-      SetXY(0,0,disp_x_size,disp_y_size);
+      SetXY(0,0,lcd_x_size,lcd_y_size);
     }
   else
     {
-      SetXY(0,0,disp_y_size,disp_x_size);
+      SetXY(0,0,lcd_y_size,lcd_x_size);
     }
 }
 void setColor(long int color)
@@ -684,16 +658,16 @@ void print(char *st, int x, int y, int deg)
     //	if(0)
     {
       if (x==RIGHT)
-        x=(disp_x_size+1)-(stl*x_Size);
+        x=(lcd_x_size+1)-(stl*x_Size);
       if (x==CENTER)
-        x=((disp_x_size+1)-(stl*x_Size))/2;
+        x=((lcd_x_size+1)-(stl*x_Size))/2;
     }
   else
     {
       if (x==RIGHT)
-        x=(disp_y_size+1)-(stl*x_Size);
+        x=(lcd_y_size+1)-(stl*x_Size);
       if (x==CENTER)
-        x=((disp_y_size+1)-(stl*x_Size))/2;
+        x=((lcd_y_size+1)-(stl*x_Size))/2;
     }
 
   for (i=0; i<stl; i++)
@@ -720,18 +694,18 @@ int getDisplayXSize()
 {
   if (orient==PORTRAIT)
     //	if(0)
-    return disp_x_size+1;
+    return lcd_x_size+1;
   else
-    return disp_y_size+1;
+    return lcd_y_size+1;
 }
 
 int getDisplayYSize()
 {
   if (orient==PORTRAIT)
     //	if(0)
-    return disp_y_size+1;
+    return lcd_y_size+1;
   else
-    return disp_x_size+1;
+    return lcd_x_size+1;
 }
 void printNumI(long num, int x, int y, int length, char filler)
 {

@@ -10,7 +10,7 @@ OPENOCD_PATH=/usr/share/openocd/scripts
 
 #  List of the objects files to be compiled/assembled
 
-SOURCES=src/main.c src/lcd.c src/SFont.c
+SOURCES=src/main.c src/lcd.c src/SFont.c src/drivers/ili9325.c
 SPL_SOURCES=stm32f10x_rcc.c stm32f10x_gpio.c
 SPL_OBJECTS=$(SPL_SOURCES:.c=.o)
 SYSTEM_STM32_SOURCE=$(DEVICE_CMSIS_PATH)/system_stm32f10x.c
@@ -24,7 +24,7 @@ CFLAGS_DEBUG = -g
 LDFLAGS_DEBUG= -lgcc -lc -lrdimon --specs=rdimon.specs
 CFLAGS_RELEASE = -DNDEBUG
 MODE=DEBUG
-INCLUDES = -I. -I$(CORE_CMSIS_PATH) -I$(DEVICE_CMSIS_PATH) -I$(SPL_PATH)/inc
+INCLUDES = -I. -I./src -I$(CORE_CMSIS_PATH) -I$(DEVICE_CMSIS_PATH) -I$(SPL_PATH)/inc
 
 #  Compiler Options
 CFLAGS = -Wall -mcpu=cortex-m3 -mthumb $(OPTIMIZATION) $(CFLAGS_$(MODE)) $(INCLUDES)
