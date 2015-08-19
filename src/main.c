@@ -4,10 +4,10 @@
 #include "math.h"
 #include "lcd.h"
 
-#define RS GPIO_Pin_0
-#define CS GPIO_Pin_2
-#define WR GPIO_Pin_3
-#define RST GPIO_Pin_4
+uint16_t RS = GPIO_Pin_0;
+uint16_t CS = GPIO_Pin_2;
+uint16_t WR = GPIO_Pin_3;
+uint16_t RST = GPIO_Pin_4;
 
 #define write_BSRR(byte, mask) (byte & mask) | ((~byte & mask) << 16)
 
@@ -55,7 +55,6 @@ int main()
   int x, y;
   int i;
 
-  SetPinNU(RS, CS, WR, RST);
   SetLCDSize(LCD_28);
   lcd_init();
   setFont(8,12,32);

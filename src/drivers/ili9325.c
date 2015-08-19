@@ -2,6 +2,7 @@
 
 const uint16_t lcd_x_size = 239;
 const uint16_t lcd_y_size = 319;
+extern uint16_t RS, CS, WR, RST;
 
 void lcd_init()
 {

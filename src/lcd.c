@@ -1,9 +1,12 @@
+#include "lcd.h"
+#include "SFont.h"
+
+uint8_t lcd_orientation = LANDSCAPE;
+/* Unprocessed */
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include "lcd.h"
-#include "SFont.h"
 
 
 extern const unsigned char PSmallFont[1144];
@@ -17,18 +20,8 @@ const unsigned char* font;
 unsigned long int  touch_x_left, touch_x_right, touch_y_top, touch_y_bottom;
 unsigned long int  _default_orientation;
 unsigned char      prec;
-unsigned int       RS,CS,WR,RST;
 int 	           gLCDSize;
 int  		   SDA1,SCL1;
-uint8_t lcd_orientation = LANDSCAPE;
-
-void SetPinNU(int Rrs, int Rcs, int Rwr, int Rrst)
-{
-  RS = Rrs;
-  CS = Rcs;
-  WR = Rwr;
-  RST = Rrst;
-}
 
 void SetLCDSize(int a)
 {
