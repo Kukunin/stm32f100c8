@@ -15,6 +15,11 @@ void set_xy(lcd_position x0, lcd_position y0, lcd_position x1, lcd_position y1);
 void set_pixel(lcd_color color);
 void lcd_off();
 void lcd_on();
+lcd_color from_rgb(uint8_t r, uint8_t g, uint8_t b);
+
+/* Public functions of the library */
+void fill_screen(lcd_color color);
+
 
 /* Unprocessed */
 #define LCD_18  18
@@ -40,8 +45,6 @@ extern void delay(int);
 void WriteCommand(unsigned int c);
 void WriteData(unsigned int c);
 void WriteCommandData(unsigned int cmd,unsigned int dat);
-void fillScr(unsigned int color);
-void fillScrRGB(int r, int g, int b);
 void clrScr();
 void clrXY();
 void setColor(long int color);

@@ -109,6 +109,10 @@ void set_pixel(lcd_color color)
   send_data(color);
 }
 
+lcd_color from_rgb(uint8_t r, uint8_t g, uint8_t b) {
+  return ((r&0xf8)<<8 | (g&0xfc)<<3 | (b&0xf8)>>3);
+}
+
 /* Private methods */
 void send_command(uint16_t c)
 {

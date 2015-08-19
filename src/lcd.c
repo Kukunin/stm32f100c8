@@ -2,29 +2,10 @@
 #include "SFont.h"
 
 uint8_t lcd_orientation = LANDSCAPE;
-/* Unprocessed */
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
 
-
-extern const unsigned char PSmallFont[1144];
-extern const unsigned char PBigFont[3044];
-extern const unsigned char PSevenSegNumFont[2004];
-
-int TP_X,TP_Y;
-int fch,fcl,bch,bcl;
-unsigned short int x_Size,y_Size,offset;
-const unsigned char* font;
-unsigned long int  touch_x_left, touch_x_right, touch_y_top, touch_y_bottom;
-unsigned long int  _default_orientation;
-unsigned char      prec;
-int  		   SDA1,SCL1;
-
-void fillScr(unsigned int color)
+void fill_screen(lcd_color color)
 {
-  int i,j;
+  lcd_position i,j;
   set_xy(0,0,lcd_y_size,lcd_x_size);
 
   for(i=0;i<lcd_x_size;i++)
@@ -36,13 +17,19 @@ void fillScr(unsigned int color)
     }
 }
 
-void fillScrRGB(int r, int g, int b)
-{
-  int color;
+/* Unprocessed */
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
 
-  color = ((r&248)<<8 | (g&252)<<3 | (b&248)>>3);
-  fillScr(color);
-}
+extern const unsigned char PSmallFont[1144];
+extern const unsigned char PBigFont[3044];
+extern const unsigned char PSevenSegNumFont[2004];
+
+int fch,fcl,bch,bcl;
+unsigned short int x_Size,y_Size,offset;
+const unsigned char* font;
 
 void clrScr()
 {

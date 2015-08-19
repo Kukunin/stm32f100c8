@@ -258,7 +258,7 @@ int main()
       fillRect(1,15,318,224);
 
       // Draw some random circle
-      fillScrRGB(0, 0, 255);
+      fill_screen(from_rgb(0, 0, 255));
       setColorRGB(255, 0, 0);
       fillRoundRect(80, 70, 239, 169);
 
