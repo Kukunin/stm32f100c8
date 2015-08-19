@@ -1,7 +1,7 @@
 #include "lcd.h"
 
-const uint16_t lcd_x_size = 239;
-const uint16_t lcd_y_size = 319;
+const lcd_position lcd_x_size = 239;
+const lcd_position lcd_y_size = 319;
 extern uint16_t RS, CS, WR, RST;
 
 void send_command(uint16_t c);
@@ -77,7 +77,7 @@ void lcd_init()
   send_command_data(0x0007, 0x0133);
 }
 
-void set_xy(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t y1)
+void set_xy(lcd_position x0, lcd_position y0, lcd_position x1, lcd_position y1)
 {
   swap(x0, y0);
   swap(x1, y1);
@@ -104,7 +104,7 @@ void lcd_on()
   send_command(0x29);
 }
 
-void set_pixel(uint16_t color)
+void set_pixel(lcd_color color)
 {
   send_data(color);
 }

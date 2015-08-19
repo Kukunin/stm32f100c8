@@ -3,13 +3,16 @@
 #define PORTRAIT  6
 #define LANDSCAPE 9
 
-extern const uint16_t lcd_x_size;
-extern const uint16_t lcd_y_size;
+#define lcd_color uint16_t
+#define lcd_position uint16_t
+
+extern const lcd_position lcd_x_size;
+extern const lcd_position lcd_y_size;
 
 /* Functions to override by LCD driver */
 void lcd_init();
-void set_xy(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t y1);
-void set_pixel(uint16_t color);
+void set_xy(lcd_position x0, lcd_position y0, lcd_position x1, lcd_position y1);
+void set_pixel(lcd_color color);
 void lcd_off();
 void lcd_on();
 
