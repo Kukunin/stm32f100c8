@@ -33,7 +33,6 @@ extern void setDataBus(int c);
 extern void digitalWrite(int, char);
 extern void delay(int);
 
-void SetLCDSize(int);
 //void swap(unsigned int i,unsigned int j);
 void WriteCommand(unsigned int c);
 void WriteData(unsigned int c);

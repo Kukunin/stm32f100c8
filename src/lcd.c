@@ -20,13 +20,7 @@ const unsigned char* font;
 unsigned long int  touch_x_left, touch_x_right, touch_y_top, touch_y_bottom;
 unsigned long int  _default_orientation;
 unsigned char      prec;
-int 	           gLCDSize;
 int  		   SDA1,SCL1;
-
-void SetLCDSize(int a)
-{
-  gLCDSize = a;
-}
 
 void fillScr(unsigned int color)
 {

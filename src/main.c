@@ -55,7 +55,6 @@ int main()
   int x, y;
   int i;
 
-  SetLCDSize(LCD_28);
   lcd_init();
   setFont(8,12,32);
   setColor(0x07e0);
