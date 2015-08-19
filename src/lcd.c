@@ -24,7 +24,6 @@ unsigned char      prec;
 unsigned int       RS,CS,WR,RST;
 int 	           gLCDSize;
 int  		   SDA1,SCL1;
-unsigned int       gTime;
 
 void SetPinNU(int Rrs, int Rcs, int Rwr, int Rrst)
 {
@@ -41,8 +40,6 @@ void SetLCDSize(int a)
 
 void LCDInit(void)
 {
-  gTime = 30;
-
   switch(gLCDSize)
     {
     case LCD_18:
@@ -70,13 +67,10 @@ void LCDInit(void)
     }
   orient=LANDSCAPE;
   digitalWrite(RST, 1);
-  delay(1);
   digitalWrite(RST, 0);
-  delay(1);
   digitalWrite(RST, 1);
   digitalWrite(CS, 1);
   digitalWrite(WR, 1);
-  delay(20);
 
 
   switch(gLCDSize)
@@ -149,28 +143,19 @@ void LCDInit(void)
 void WriteCommand(unsigned int c)
 {
   digitalWrite(RS,0);
-  delay(gTime);
   digitalWrite(CS,0);
-  delay(gTime);
   setDataBus(c);
-  delay(gTime);
   digitalWrite(WR,0);
-  delay(gTime);
   digitalWrite(WR,1);
-  delay(gTime);
   digitalWrite(CS,1);
 }
 void WriteData(unsigned int c)
 {
   digitalWrite(RS,1);
-  delay(gTime);
   digitalWrite(CS,0);
-  delay(gTime);
   setDataBus(c);
   digitalWrite(WR,0);
-  delay(gTime);
   digitalWrite(WR,1);
-  delay(gTime);
   digitalWrite(CS,1);
 
 }
