@@ -57,7 +57,7 @@ int main()
 
   SetPinNU(RS, CS, WR, RST);
   SetLCDSize(LCD_28);
-  LCDInit();
+  lcd_init();
   setFont(8,12,32);
   setColor(0x07e0);
   setBackColor(0xf800);

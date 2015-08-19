@@ -1,5 +1,15 @@
 #include <stdint.h>
 
+#define PORTRAIT  6
+#define LANDSCAPE 9
+
+extern const uint16_t lcd_x_size;
+extern const uint16_t lcd_y_size;
+
+void lcd_init();
+
+/* Unprocessed */
+extern unsigned int       RS,CS,WR,RST;
 #define LCD_18  18
 #define LCD_22  22
 #define LCD_22SPI       23
@@ -15,14 +25,10 @@
 #define RIGHT                   9999
 #define CENTER                  9998
 
-extern const uint16_t lcd_x_size;
-extern const uint16_t lcd_y_size;
-
 extern void setDataBus(int c);
 extern void digitalWrite(int, char);
 extern void delay(int);
 
-void LCDInit(void);
 void SetPinNU(int, int, int, int);
 void SetLCDSize(int);
 //void swap(unsigned int i,unsigned int j);
